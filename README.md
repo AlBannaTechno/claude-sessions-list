@@ -57,6 +57,15 @@ You need:
 go install github.com/wailsapp/wails/v3/cmd/wails3@v3.0.0-beta.20
 ```
 
+- On macOS only: Apple's Command Line Tools, because parts of the app are compiled with the Mac's C compiler. Most
+  developers already have them; if the build fails with an error about `clang` or `xcrun`, install them:
+
+```bash
+xcode-select --install
+```
+
+An app you build yourself opens without any macOS warning, because it was not downloaded.
+
 Install the frontend packages once:
 
 ```bash
