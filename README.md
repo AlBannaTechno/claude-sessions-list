@@ -32,7 +32,7 @@ The app only **reads** these files. It never changes or deletes anything that be
 | What | macOS | Windows |
 |---|---|---|
 | Conversations (CLI and desktop) | `~/.claude/projects/*/*.jsonl` | `%USERPROFILE%\.claude\projects\*\*.jsonl` |
-| Desktop app titles and ids | `~/Library/Application Support/Claude/claude-code-sessions/` | `%APPDATA%\Claude\claude-code-sessions\` (not yet confirmed) |
+| Desktop app titles and ids | `~/Library/Application Support/Claude/claude-code-sessions/` | `%APPDATA%\Claude\claude-code-sessions\` |
 
 If `CLAUDE_CONFIG_DIR` is set, conversations are read from `$CLAUDE_CONFIG_DIR/projects` instead.
 
@@ -43,8 +43,8 @@ Deleting it is safe.
 ## Platforms
 
 - **macOS:** built and used.
-- **Windows (x86 and ARM):** builds, and the Windows path handling is covered by tests, but it has not been run on a
-  Windows machine yet. Reports are welcome.
+- **Windows (x86):** built and used on Windows 11.
+- **Windows on ARM:** should build; not tried.
 - **Linux:** should build; not tried.
 
 ## Build
@@ -92,6 +92,8 @@ for Windows on ARM; without it the build matches the computer you build on.
 ```bash
 wails3 task windows:build ARCH=amd64
 ```
+
+Use this task rather than a plain `go build`: it also puts the app's icon into the `.exe`. Windows needs no C compiler.
 
 After changing an exported method of `internal/app/Service`, regenerate the frontend's bindings:
 
