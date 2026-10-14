@@ -1,0 +1,201 @@
+@import "tailwindcss";
+
+/* Colours, sizes and classes copied from PR Watcher. Light first; dark follows the system. Text colours reach 4.5:1 on the
+   page, panel and sidebar backgrounds, and white on a primary button does too (U2); muted stays a clear step from faint,
+   so a faint line under a muted one still reads quieter. contrast.test.ts checks every pair. */
+:root {
+  --bg: #ffffff;
+  --sidebar: #f6f6f4;
+  --panel: #fafaf9;
+  --line: #ececea;
+  --line-soft: #f0f0ee;
+  --line-strong: #dadad6;
+  --text: #1c1c1f;
+  --text-2: #3b3b3f;
+  --muted: #5c5c61;
+  --faint: #707076;
+  --hover: #f1f1ef;
+  --nav-on: #e8e8e5;
+  --accent: #2c5aad;
+  --accent-hover: #234a92;
+  --accent-soft: #ebf0fa;
+  --accent-fill: #2c5aad; --accent-fill-hover: #234a92; /* a primary button, under white text */
+  --select-row: #f3f6fc;
+
+  --need-bg: #fbf1e1; --need-fg: #8f5308; --need-dot: #d1861a;
+  --work-bg: #ebf0fa; --work-fg: #2c5aad; --work-dot: #3c6ccb;
+  --wait-bg: #f0f0ee; --wait-fg: #5c5c61; --wait-dot: #9d9da3;
+  --ok-bg: #e8f3ec;   --ok-fg: #2a6b44;   --ok-dot: #3d9160;
+  --bad-bg: #fbecec;  --bad-fg: #a23737;  --bad-dot: #cb4a4a;
+  --warn-border: #efd9b4; --warn-bg: #fdf7ec; --warn-title: #6e430a; --warn-text: #6e5330;
+  --star: #d9a21b;
+
+  --switch-off: #d3d3cf;
+  --shadow-pop: 0 8px 24px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.06);
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #19191b;
+    --sidebar: #141416;
+    --panel: #1e1e21;
+    --line: #2a2a2e;
+    --line-soft: #242427;
+    --line-strong: #37373c;
+    --text: #ececee;
+    --text-2: #d0d0d4;
+    --muted: #a0a0a7;
+    --faint: #85858c;
+    --hover: #232326;
+    --nav-on: #2a2a2e;
+    --accent: #6f98e8;
+    --accent-hover: #8aacef;
+    --accent-soft: #1f2a3f;
+    --accent-fill: #4372d0; --accent-fill-hover: #3366cc; /* deeper than the link blue, so white text on it reads */
+    --select-row: #1f2533;
+
+    --need-bg: #3a2b14; --need-fg: #f0c07a; --need-dot: #e0a040;
+    --work-bg: #1f2a3f; --work-fg: #9dbcf2; --work-dot: #6f98e8;
+    --wait-bg: #2a2a2e; --wait-fg: #b4b4ba; --wait-dot: #808088;
+    --ok-bg: #19301f;   --ok-fg: #8fd1a5;   --ok-dot: #52b074;
+    --bad-bg: #3a1d1d;  --bad-fg: #f0a0a0;  --bad-dot: #e06464;
+    --warn-border: #5a4420; --warn-bg: #2c2415; --warn-title: #f0c98a; --warn-text: #d8c09a;
+    --star: #f0c040;
+
+    --switch-off: #45454b;
+    --shadow-pop: 0 8px 24px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.08);
+    color-scheme: dark;
+  }
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-sidebar: var(--sidebar);
+  --color-panel: var(--panel);
+  --color-line: var(--line);
+  --color-line-soft: var(--line-soft);
+  --color-line-strong: var(--line-strong);
+  --color-ink: var(--text);
+  --color-ink-2: var(--text-2);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+  --color-hover: var(--hover);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-select-row: var(--select-row);
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace;
+}
+
+@layer base {
+  html, body, #root { height: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-sans);
+    font-size: 13px;
+    line-height: 1.4;
+    -webkit-font-smoothing: antialiased;
+    overflow: hidden;
+    user-select: none;
+    cursor: default;
+  }
+  a { color: var(--accent); text-decoration: none; cursor: pointer; }
+  a:hover { color: var(--accent-hover); }
+  input, textarea, select, button { font: inherit; color: inherit; }
+  textarea, input, .selectable { user-select: text; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; border-radius: 4px; }
+}
+
+@layer components {
+  .mono { font-family: var(--font-mono); font-size: 12px; }
+  .label-caps { font-size: 11.5px; font-weight: 600; color: var(--muted); letter-spacing: 0.02em; text-transform: uppercase; }
+
+  .nav { display: flex; align-items: center; gap: 10px; height: 30px; padding: 0 10px; border-radius: 6px; color: var(--text-2); width: 100%; text-align: left; }
+  .nav:hover { background: var(--hover); }
+  .nav[aria-current="page"] { background: var(--nav-on); color: var(--text); font-weight: 500; }
+  .pill { display: inline-flex; align-items: center; gap: 6px; height: 22px; padding: 0 9px; border-radius: 11px; font-size: 12px; font-weight: 500; white-space: nowrap; }
+  .dot { width: 6px; height: 6px; border-radius: 3px; flex: none; }
+  .s-need { background: var(--need-bg); color: var(--need-fg); } .s-need .dot { background: var(--need-dot); }
+  .s-work { background: var(--work-bg); color: var(--work-fg); } .s-work .dot { background: var(--work-dot); }
+  .s-wait { background: var(--wait-bg); color: var(--wait-fg); } .s-wait .dot { background: var(--wait-dot); }
+  .s-ok { background: var(--ok-bg); color: var(--ok-fg); } .s-ok .dot { background: var(--ok-dot); }
+  .s-bad { background: var(--bad-bg); color: var(--bad-fg); } .s-bad .dot { background: var(--bad-dot); }
+  .s-work .dot.live { animation: pulse 1.6s ease-in-out infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+  /* The one chip on rows and lists (U1): normal font, a 1px soft border, the page's background, 20px tall. A tint says
+     whose it is, kept soft like the Overview's (40% of the colour in the border): you for your own decision, ok for done;
+     bad, when something needs you, is as it was. The line height fills the chip inside its border, so text cut short
+     inside it (truncate) keeps the tails of its letters, and every chip's words sit at the same height. */
+  .chip { display: inline-flex; align-items: center; gap: 4px; height: 20px; max-width: 220px; min-width: 0; padding: 0 7px; border-radius: 10px; overflow: hidden;
+    font-size: 11.5px; font-weight: 400; line-height: 18px; white-space: nowrap; vertical-align: middle; border: 1px solid var(--line); background: var(--bg); color: var(--text-2); }
+  .chip-you { background: var(--need-bg); border-color: color-mix(in srgb, var(--need-dot) 40%, var(--line-strong)); color: var(--need-fg); }
+  .chip-ok { background: var(--ok-bg); border-color: color-mix(in srgb, var(--ok-dot) 40%, var(--line-strong)); color: var(--ok-fg); }
+  .chip-bad { background: var(--bad-bg); border-color: var(--bad-dot); color: var(--bad-fg); }
+
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 28px; padding: 0 10px; border: 1px solid var(--line-strong); border-radius: 6px; background: var(--bg); color: var(--text); font-size: 12.5px; font-weight: 500; white-space: nowrap; }
+  .btn:hover:not(:disabled) { background: var(--hover); }
+  .btn:disabled { opacity: 0.5; }
+  .btn-primary { background: var(--accent-fill); border-color: var(--accent-fill); color: #fff; }
+  .btn-primary:hover:not(:disabled) { background: var(--accent-fill-hover); border-color: var(--accent-fill-hover); }
+  .btn-small { height: 24px; padding: 0 8px; font-size: 12px; }
+  .btn-danger { color: var(--bad-fg); }
+  .field { display: flex; align-items: center; gap: 8px; height: 28px; padding: 0 9px; border: 1px solid var(--line-strong); border-radius: 6px; background: var(--bg); font-size: 12.5px; }
+  .field:focus-within { border-color: var(--accent); }
+  .field input { border: 0; outline: 0; background: transparent; flex: 1; min-width: 0; }
+  .select { height: 28px; padding: 0 26px 0 9px; border: 1px solid var(--line-strong); border-radius: 6px; background: var(--bg); font-size: 12.5px; appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none' stroke='%2386868c' stroke-width='1.5' stroke-linecap='round'%3E%3Cpath d='m4.5 6.5 3.5 3.5 3.5-3.5'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 6px center; }
+  .textarea { width: 100%; border: 1px solid var(--line-strong); border-radius: 6px; padding: 8px 10px; background: var(--bg); font-family: var(--font-mono); font-size: 12px; line-height: 1.55; resize: vertical; outline: 0; }
+  .textarea:focus { border-color: var(--accent); }
+
+  .switch { width: 30px; height: 18px; border-radius: 9px; background: var(--switch-off); position: relative; flex: none; transition: background 120ms; }
+  .switch[data-state="checked"] { background: var(--accent); }
+  .switch:disabled { opacity: 0.45; }
+  .switch-thumb { display: block; width: 14px; height: 14px; border-radius: 7px; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.22); transform: translateX(2px); transition: transform 120ms; }
+  .switch[data-state="checked"] .switch-thumb { transform: translateX(14px); }
+
+  .row-line { border-top: 1px solid var(--line-soft); }
+  .hr { height: 1px; background: var(--line); }
+  .scroll { overflow-y: auto; overscroll-behavior: contain; }
+  .scroll::-webkit-scrollbar { width: 10px; height: 10px; } /* the sideways bar as thin as the upright one (fix 6) */
+  .scroll::-webkit-scrollbar-track, .scroll::-webkit-scrollbar-corner { background: transparent; }
+  .scroll::-webkit-scrollbar-thumb { background: var(--line-strong); border-radius: 5px; border: 3px solid var(--bg); }
+
+  .markdown { line-height: 1.55; user-select: text; overflow-wrap: break-word; } /* a long link breaks, not the page (U1) */
+  .markdown p { margin: 0 0 8px; }
+  .markdown p:last-child { margin-bottom: 0; }
+  .markdown code { font-family: var(--font-mono); font-size: 12px; padding: 1px 4px; border-radius: 4px; background: var(--wait-bg); }
+  .markdown pre { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 8px 10px; overflow-x: auto; }
+  .markdown pre code { background: none; padding: 0; }
+  .markdown table { border-collapse: collapse; margin: 6px 0; font-size: 12.5px; }
+  .markdown th, .markdown td { border: 1px solid var(--line); padding: 4px 8px; text-align: left; vertical-align: top; }
+  .markdown h1, .markdown h2, .markdown h3 { font-size: 13.5px; font-weight: 600; margin: 12px 0 6px; }
+  .markdown ul, .markdown ol { margin: 0 0 8px; padding-left: 20px; }
+  .markdown li { margin: 2px 0; }
+
+  .pop { background: var(--bg); border-radius: 8px; box-shadow: var(--shadow-pop); }
+
+  .seg { display: inline-flex; border: 1px solid var(--line-strong); border-radius: 6px; overflow: hidden; height: 28px; }
+  .seg button { padding: 0 10px; font-size: 12.5px; color: var(--muted); }
+  .seg button + button { border-left: 1px solid var(--line-strong); }
+  .seg button[aria-pressed="true"] { background: var(--nav-on); color: var(--text); font-weight: 500; }
+  .kcap { display: inline-flex; align-items: center; justify-content: center; min-width: 18px; height: 18px; padding: 0 4px; border-radius: 4px; font-size: 11px;
+    border: 1px solid var(--line-strong); background: var(--panel); color: var(--text-2); font-family: var(--font-sans); }
+
+  /* Claude Sessions. */
+  /* A session row in the folder list: two lines, the name and its id and age. */
+  .session-row { display: flex; flex-direction: column; gap: 1px; width: 100%; min-width: 0; padding: 5px 10px 5px 30px; border-radius: 6px; text-align: left; color: var(--text-2); }
+  .session-row:hover { background: var(--hover); }
+  .session-row[aria-current="page"] { background: var(--nav-on); color: var(--text); }
+  .session-row[aria-current="page"] .session-name { font-weight: 500; }
+  .folder-row { display: flex; align-items: center; gap: 6px; width: 100%; height: 28px; padding: 0 8px; border-radius: 6px; text-align: left; color: var(--text); font-weight: 500; }
+  .folder-row:hover { background: var(--hover); }
+  /* A message the person typed, set apart from Claude's answers. */
+  .msg-user { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; white-space: pre-wrap; overflow-wrap: anywhere; user-select: text; line-height: 1.5; }
+  .tool-line { display: flex; align-items: center; gap: 6px; width: 100%; min-width: 0; height: 24px; padding: 0 6px; border-radius: 6px; text-align: left; color: var(--muted); font-size: 12px; }
+  .tool-line:hover { background: var(--hover); }
+  .tool-box { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 360px; overflow: auto; background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 6px 9px; margin: 2px 0 6px 20px; user-select: text; line-height: 1.5; }
+}

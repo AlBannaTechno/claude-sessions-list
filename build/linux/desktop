@@ -1,0 +1,13 @@
+[Desktop Entry]
+Version=1.0
+Name=Claude Sessions
+Comment=Watches GitHub pull requests and runs Claude Code reviews
+# The Exec line includes %u to pass the URL to the application
+Exec=/usr/local/bin/claude-sessions %u
+Terminal=false
+Type=Application
+Icon=claude-sessions
+Categories=Utility;
+StartupWMClass=claude-sessions
+
+ 

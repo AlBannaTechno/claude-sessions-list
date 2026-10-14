@@ -1,0 +1,15 @@
+{
+	"fixed": {
+		"file_version": "0.1.0"
+	},
+	"info": {
+		"0000": {
+			"ProductVersion": "0.1.0",
+			"CompanyName": "AlBannaTechno",
+			"FileDescription": "Watches GitHub pull requests and runs Claude Code reviews",
+			"LegalCopyright": "2026 Osama Al Banna",
+			"ProductName": "Claude Sessions",
+			"Comments": "This is a comment"
+		}
+	}
+}
