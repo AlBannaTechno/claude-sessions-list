@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useListing, useRefreshOnFocus, type Summary } from "./api";
-import { filterGroups } from "./lib/filter";
+import { defaultSource, filterGroups, sources, type Source } from "./lib/filter";
 import { FolderTree } from "./components/FolderTree";
 import { SessionView } from "./components/SessionView";
 import { Empty, LoadFailed, Loading } from "./components/ui";
@@ -28,15 +28,25 @@ export default function App() {
   const listing = useListing();
   const [query, setQuery] = useState("");
   const [showArchived, setShowArchived] = useState(() => load("showArchived", false));
+  const [source, setSource] = useState<Source>(() => {
+    const saved = load<Source>("source", defaultSource);
+    return sources.some((o) => o.value === saved) ? saved : defaultSource;
+  });
   const [openKeys, setOpenKeys] = useState<string[]>(() => load("openFolders", []));
   const [selectedId, setSelectedId] = useState<string | null>(() => load("selected", null));
 
   useEffect(() => save("showArchived", showArchived), [showArchived]);
+  useEffect(() => save("source", source), [source]);
   useEffect(() => save("openFolders", openKeys), [openKeys]);
   useEffect(() => save("selected", selectedId), [selectedId]);
 
   const all = listing.data?.groups ?? [];
-  const groups = useMemo(() => filterGroups(all, query, showArchived), [all, query, showArchived]);
+  const groups = useMemo(() => filterGroups(all, { query, showArchived, source }), [all, query, showArchived, source]);
+  // How many sessions each choice would show, with the search and archived switch as they are now.
+  const sourceCounts = useMemo(() => {
+    const count = (src: Source) => filterGroups(all, { query, showArchived, source: src }).reduce((n, g) => n + (g.sessions?.length ?? 0), 0);
+    return { all: count("all"), cli: count("cli"), desktop: count("desktop") };
+  }, [all, query, showArchived]);
   const selected: Summary | null = useMemo(() => {
     for (const g of all) for (const s of g.sessions ?? []) if (s.id === selectedId) return s;
     return null;
@@ -65,6 +75,9 @@ export default function App() {
         setQuery={setQuery}
         showArchived={showArchived}
         setShowArchived={setShowArchived}
+        source={source}
+        setSource={setSource}
+        sourceCounts={sourceCounts}
         onRefresh={() => void listing.refetch()}
         refreshing={listing.isFetching}
       />
@@ -87,7 +100,7 @@ export default function App() {
             body={
               groups.length
                 ? "Open a folder on the left and click a session to read its conversation."
-                : "Nothing matches the search. Clear it, or turn on Show archived."
+                : "Nothing matches. Clear the search, pick All instead of CLI or Desktop, or turn on Show archived."
             }
           />
         </main>

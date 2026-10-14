@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { Group, Summary } from "../api";
-import { filterGroups, visibleSessions } from "./filter";
+import { defaultSource, filterGroups, visibleSessions, type Filters } from "./filter";
 import { hasTime, relAgo } from "./format";
 
 function session(over: Partial<Summary>): Summary {
@@ -14,25 +14,41 @@ const groups: Group[] = [
   {
     key: "/u/notes-app", label: "notes-app", path: "/u/notes-app", lastActive: "",
     sessions: [
-      session({ id: "a1", title: "Fix the login page", groupKey: "/u/notes-app" }),
-      session({ id: "a2", title: "Old work", archived: true, groupKey: "/u/notes-app" }),
+      session({ id: "a1", localId: "local_a1", title: "Fix the login page", groupKey: "/u/notes-app" }),
+      session({ id: "a2", localId: "local_a2", title: "Old work", archived: true, groupKey: "/u/notes-app" }),
     ],
   },
   { key: "/u/shop", label: "shop", path: "/u/shop", lastActive: "", sessions: [session({ id: "b1", title: "Add a cart", firstPrompt: "please add a cart", groupKey: "/u/shop" })] },
 ];
 
+// Everything, so each test changes only the filter it is about.
+const every: Filters = { query: "", showArchived: false, source: "all" };
+const search = (query: string) => filterGroups(groups, { ...every, query });
+
 describe("filterGroups", () => {
   it("hides archived sessions unless asked", () => {
-    expect(filterGroups(groups, "", false)[0].sessions!.map((s) => s.id)).toEqual(["a1"]);
-    expect(filterGroups(groups, "", true)[0].sessions!.map((s) => s.id)).toEqual(["a1", "a2"]);
+    expect(filterGroups(groups, every)[0].sessions!.map((s) => s.id)).toEqual(["a1"]);
+    expect(filterGroups(groups, { ...every, showArchived: true })[0].sessions!.map((s) => s.id)).toEqual(["a1", "a2"]);
   });
 
   it("needs every word, in any field, and drops folders left empty", () => {
-    expect(filterGroups(groups, "login PAGE", false).map((g) => g.label)).toEqual(["notes-app"]);
-    expect(filterGroups(groups, "please cart", false).map((g) => g.label)).toEqual(["shop"]);
-    expect(filterGroups(groups, "SHOP", false)[0].sessions).toHaveLength(1); // the folder's name counts too
-    expect(filterGroups(groups, "b1", false).map((g) => g.label)).toEqual(["shop"]);
-    expect(filterGroups(groups, "nothing like this", false)).toEqual([]);
+    expect(search("login PAGE").map((g) => g.label)).toEqual(["notes-app"]);
+    expect(search("please cart").map((g) => g.label)).toEqual(["shop"]);
+    expect(search("SHOP")[0].sessions).toHaveLength(1); // the folder's name counts too
+    expect(search("b1").map((g) => g.label)).toEqual(["shop"]);
+    expect(search("nothing like this")).toEqual([]);
+  });
+
+  it("lists desktop sessions, terminal sessions, or both", () => {
+    const ids = (source: Filters["source"]) => filterGroups(groups, { ...every, source }).flatMap((g) => g.sessions!.map((s) => s.id));
+    expect(ids("desktop")).toEqual(["a1"]);
+    expect(ids("cli")).toEqual(["b1"]);
+    expect(ids("all")).toEqual(["a1", "b1"]);
+    expect(filterGroups(groups, { ...every, source: "cli" }).map((g) => g.label)).toEqual(["shop"]); // a folder with no CLI sessions goes
+  });
+
+  it("shows desktop sessions until another source is picked", () => {
+    expect(defaultSource).toBe("desktop");
   });
 
   it("walks only the sessions of open folders", () => {

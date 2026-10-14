@@ -15,6 +15,8 @@ folder ended up in one long list.
 - **Each session shows** its name, its id, when it was last active, and labels for worktree, archived, and CLI-only sessions.
 - **The conversation** shows your messages, Claude's answers as formatted text (tables, code, lists), and each tool call
   as one line that opens to show what it was asked and what it answered. Claude's thinking is hidden until you switch it on.
+- **All, CLI or Desktop:** list every session, only the ones started from the terminal, or only the ones started in the
+  Claude desktop app. **Desktop** is the default; the app remembers what you pick.
 - **Search** by session name, id, folder or first prompt.
 - **Buttons** to open the session in the Claude desktop app, copy the command that continues it in the terminal
   (`claude --resume <id>`), or open its folder.

@@ -2,7 +2,7 @@ import { useEffect, useRef, type KeyboardEvent } from "react";
 import { RefreshCw, Search, X } from "lucide-react";
 import type { Group, Summary } from "../api";
 import { relAgo, shortId } from "../lib/format";
-import { visibleSessions } from "../lib/filter";
+import { sources, visibleSessions, type Source } from "../lib/filter";
 import { Chip, FoldArrow, Switch, iconProps } from "./ui";
 
 type Props = {
@@ -16,6 +16,9 @@ type Props = {
   setQuery: (q: string) => void;
   showArchived: boolean;
   setShowArchived: (v: boolean) => void;
+  source: Source;
+  setSource: (s: Source) => void;
+  sourceCounts: Record<Source, number>;
   onRefresh: () => void;
   refreshing: boolean;
 };
@@ -69,6 +72,7 @@ export function FolderTree(p: Props) {
             </button>
           )}
         </div>
+        <SourceFilter source={p.source} setSource={p.setSource} counts={p.sourceCounts} />
         <div className="flex items-center justify-between">
           <Switch checked={p.showArchived} onChange={p.setShowArchived} label="Show archived" />
           {p.totals && (
@@ -102,6 +106,20 @@ export function FolderTree(p: Props) {
         })}
       </div>
     </aside>
+  );
+}
+
+/** All, CLI or Desktop: which sessions the list shows, by where they were started. Each shows how many it has. */
+export function SourceFilter({ source, setSource, counts }: { source: Source; setSource: (s: Source) => void; counts: Record<Source, number> }) {
+  return (
+    <div className="seg w-full" role="group" aria-label="Which sessions to list">
+      {sources.map((o) => (
+        <button key={o.value} className="flex-1 flex items-center justify-center gap-1.5" aria-pressed={source === o.value} onClick={() => setSource(o.value)} title={o.title}>
+          {o.label}
+          <span className="text-faint text-[11.5px] font-normal tabular-nums">{counts[o.value]}</span>
+        </button>
+      ))}
+    </div>
   );
 }
 
