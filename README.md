@@ -7,6 +7,8 @@ It was made after a Claude desktop app update removed **Group by → Project** f
 ([anthropics/claude-code#102157](https://github.com/anthropics/claude-code/issues/102157)), so sessions from every
 folder ended up in one long list.
 
+![Claude Sessions: folders and their sessions on the left, the chosen session's conversation on the right (personal content blurred)](docs/screenshot.png)
+
 ## What it does
 
 - **One group per folder**, newest activity first. Sessions inside each group are newest first.
